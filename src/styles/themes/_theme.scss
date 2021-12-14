@@ -13,7 +13,7 @@ $themeList: 'light' 'night' 'default';
  */
 
 $themes: (
-    primary-color: themeItem(#A400FF, #EB0707, #E91244),
+    primary-color: themeItem(#A400FF, #EB0707),
 );
 
 @mixin setTheme($name) {
