@@ -24,6 +24,6 @@ const i18n = new VueI18n({
     locale: 'zh',
     // set locale messages
     messages
-})
+});
 
 export default i18n;
