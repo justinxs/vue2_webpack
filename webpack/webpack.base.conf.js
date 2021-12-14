@@ -10,7 +10,7 @@ module.exports = {
         maxEntrypointSize: 1000 * 1024,
     },
     entry: {
-        main: './src/index.js'
+        main: './src/app.js'
     },
     output: {
         filename: '[name].[chunkhash].js',
