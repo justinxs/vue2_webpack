@@ -1,13 +1,14 @@
 const { merge } = require('webpack-merge');
 const prodConfig = require('./webpack.prod.conf.js');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const serverConfig = require('../config/server');
 
 module.exports = merge(prodConfig, {
     plugins: [
         new BundleAnalyzerPlugin({
             analyzerMode: 'server',
-            analyzerHost: '127.0.0.1',
-            analyzerPort: 9001
+            analyzerHost: serverConfig.host,
+            analyzerPort: serverConfig.analyzerPort
         })
     ],
 });

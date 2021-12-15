@@ -17,7 +17,6 @@ module.exports = {
         filename: '[name].[chunkhash].js',
         chunkFilename: '[name].[chunkhash].js',
         path: path.resolve(__dirname, '../dist'),
-        clean: true,
         publicPath: '',
     },
     module: {

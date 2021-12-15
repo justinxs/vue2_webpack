@@ -1,7 +1,7 @@
 <template>
     <layout>
         <div class="home">
-            home----------{{Date.now() | formatTime}}
+            home-----------{{Date.now() | formatTime}}
             <img src="~@images/flower.webp" alt="">
         </div>
     </layout>

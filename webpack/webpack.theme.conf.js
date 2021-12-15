@@ -20,7 +20,7 @@ function getThemesEntry() {
 }
 
 module.exports = {
-    mode: 'production',
+    mode: process.env.NODE_ENV,
 	entry: getThemesEntry,
 	output: {
 		path: path.resolve(__dirname, '../dist'),

@@ -6,6 +6,8 @@
     </layout>
 </template>
 <script>
+import request from '@/utils/request';
+
 export default {
     data () {
         return {
@@ -17,6 +19,8 @@ export default {
     created () {
     },
     mounted () {
+        request.get('/api/apolloConfig')
+        // request.post('/api/lever')
     },
     methods: {
     }

@@ -1,6 +1,7 @@
 const path = require('path')
 const { merge } = require('webpack-merge');
 const baseConfig = require('./webpack.base.conf.js');
+const serverConfig = require('../config/server');
 
 module.exports = merge(baseConfig, {
     // 从 webpack v4 开始, 指定 mode 会自动地配置 process.env.NODE_ENV
@@ -14,18 +15,13 @@ module.exports = merge(baseConfig, {
             watch: true,
         },
         compress: true,
-        host: '0.0.0.0',
-        port: 9000,
+        host: serverConfig.host,
+        port: serverConfig.port,
         hot: false,
-        open: ['http://localhost:9000'],
+        open: [`http://localhost:${serverConfig.port}`],
         client: {
             progress: true
         },
-        proxy: {
-            '/api': {
-                target: 'http://localhost:8340',
-                pathRewrite: { '^/api': '/api' },
-            },
-        },
+        proxy: serverConfig.proxy,
     },
 });
