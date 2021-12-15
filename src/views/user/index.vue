@@ -1,8 +1,7 @@
 <template>
     <layout>
-        <div class="home">
-            home----------{{Date.now() | formatTime}}
-            <img src="~@images/flower.webp" alt="">
+        <div class="user-page">
+            uuuuuuuuuuuuuuuuuu{{formatTime(Date.now())}}
         </div>
     </layout>
 </template>
@@ -10,6 +9,7 @@
 export default {
     data () {
         return {
+
         }
     },
     components: {

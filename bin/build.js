@@ -1,13 +1,10 @@
 const Webpack = require('webpack');
-const webpackConfig = require('./webpack.prod.conf.js');
+const webpackConfig = require('../webpack/webpack.prod.conf.js');
+const themeConfig = require('../webpack/webpack.theme.conf.js');
 
-const compiler = Webpack(webpackConfig);
+const compiler = Webpack([webpackConfig, themeConfig]);
 
-compiler.run({
-	// Example watchOptions
-	aggregateTimeout: 300,
-	poll: undefined
-}, (err, stats) => {
+compiler.run((err, stats) => {
 	if (err) {
         console.error(err.stack || err);
         if (err.details) {
@@ -25,6 +22,5 @@ compiler.run({
     if (stats.hasWarnings()) {
         console.warn(info.warnings);
     }
-
 
 });

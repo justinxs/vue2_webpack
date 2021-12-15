@@ -1,23 +1,16 @@
 const Webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
-const webpackConfig = require('./webpack.dev.conf.js');
+const webpackConfig = require('../webpack/webpack.dev.conf.js');
+const themeConfig = require('../webpack/webpack.theme.conf.js');
 
-const compiler = Webpack(webpackConfig);
-const devServerOptions = { ...webpackConfig.devServer, open: true };
+const compiler = Webpack([webpackConfig, themeConfig]);
+const devServerOptions = { ...webpackConfig.devServer };
 const server = new WebpackDevServer(devServerOptions, compiler);
 
-let isServerStart = false;
-compiler.watch({
-	// Example watchOptions
-	aggregateTimeout: 300,
-	poll: undefined
-}, (err, stats) => {
-	if (!isServerStart) {
-		server.startCallback(() => {
-            console.log('Successfully started server on http://localhost:' + devServerOptions.port);
-        });
-		isServerStart = true;
-	}
+compiler.run((err, stats) => {
+	server.startCallback(() => {
+        console.log('Successfully started server on http://localhost:' + devServerOptions.port);
+    });
 
 	if (err) {
         console.error(err.stack || err);

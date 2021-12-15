@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const { VueLoaderPlugin } = require('vue-loader');
 
 module.exports = {
     performance: {
@@ -23,10 +24,7 @@ module.exports = {
         rules: [
             {
                 test: /\.vue$/,
-                loader: 'vue-loader',
-                options: {
-        
-                }
+                loader: 'vue-loader'
             },
             {
                 test: /\.m?js$/,
@@ -67,7 +65,7 @@ module.exports = {
                 ],
             },
             {
-                test: /\.(png|svg|jpg|jpeg|gif)$/i,
+                test: /\.(png|svg|jpg|jpeg|gif|webp)$/i,
                 // asset 自动地在 asset/resource 和 asset/inline 之间进行选择, 默认size < 8kb 实行asset/inline
                 type: 'asset',
                 parser: {
@@ -110,6 +108,7 @@ module.exports = {
         },
     },
     plugins: [
+        new VueLoaderPlugin(),
         // 自动注入js、css等入口资源生成html文件
         new HtmlWebpackPlugin({
             inject: true,
@@ -126,7 +125,7 @@ module.exports = {
         }),
         // 注入webpack编译时js中的全局变量
         new webpack.DefinePlugin({
-            'process.env.WP_TARGET': JSON.stringify(process.env.WP_TARGET)
+            'process.env.THEME': JSON.stringify(process.env.THEME)
         })
     ],
     resolve: {
