@@ -19,8 +19,12 @@ export default {
     created () {
     },
     mounted () {
-        request.get('/api/apolloConfig')
-        // request.post('/api/lever')
+        request.get('/api/apolloConfig').then(data => {
+            console.log(data)
+        })
+        request.post('/api/login').then(data => {
+            console.log(data)
+        })
     },
     methods: {
     }

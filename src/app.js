@@ -5,6 +5,7 @@ import '@/styles/index.scss'; // global css
 import App from './App.vue';
 import store from './store';
 import router from './routes';
+import '@/mock';
 
 import i18n from './lang'; // Internationalization
 

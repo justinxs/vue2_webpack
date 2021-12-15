@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const { VueLoaderPlugin } = require('vue-loader');
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 module.exports = {
     performance: {
@@ -107,6 +108,7 @@ module.exports = {
         },
     },
     plugins: [
+        new ESLintPlugin(),
         new VueLoaderPlugin(),
         // 自动注入js、css等入口资源生成html文件
         new HtmlWebpackPlugin({
@@ -132,7 +134,8 @@ module.exports = {
 		alias: {
 			'@': path.resolve(__dirname, '../src'),
 			'@styles': path.resolve(__dirname, '../src/styles'),
-			'@images': path.resolve(__dirname, '../src/images')
+			'@images': path.resolve(__dirname, '../src/images'),
+			'@theme': path.resolve(__dirname, `../src/styles/themes/${process.env.THEME}.scss`)
 		},
 		extensions: ['.js', '.ts', '.jsx', '.tsx', '.vue', '.json'],
 	}
