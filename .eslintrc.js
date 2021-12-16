@@ -122,7 +122,9 @@ module.exports = {
         'no-mixed-spaces-and-tabs': 2,
 
         // 不能有多个空格 a =    1
-        'no-multi-spaces': 2,
+        'no-multi-spaces': [2, {
+            "ignoreEOLComments": true
+        }],
 
         'no-multi-str': 2,
         // 允许最大空行数
