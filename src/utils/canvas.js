@@ -1,4 +1,4 @@
-import { fileAsBase64, formatBase64 } from './base64.js'
+import { fileAsBase64, formatBase64 } from './base64.js';
 
 /**
  * 图片大小压缩 
@@ -12,10 +12,10 @@ import { fileAsBase64, formatBase64 } from './base64.js'
  */
 export async function imgFileZip(file, { q, type }) {
     const types = ['image/jpeg', 'image/webp'];
-    const base64Data = await fileAsBase64(file, type)
-    let result = null
+    const base64Data = await fileAsBase64(file, type);
+    let result = null;
     if (base64Data) {
-        const canvas = await imgAsCanvas(base64Data.base64)
+        const canvas = await imgAsCanvas(base64Data.base64);
         const inputType = base64Data.type || ('image/' + base64Data.name.split('.')[1]),
             outputType = (~types.indexOf(type) && type) || (~types.indexOf(inputType) && inputType) || types[0],
             base64 = canvas.toDataURL(outputType, q || 0.92);
@@ -30,10 +30,10 @@ export async function imgFileZip(file, { q, type }) {
             h: canvas.height, 
             base64, 
             outputSize: formatBase64(base64).size
-        }
+        };
     }
 
-    return result
+    return result;
 }
 
 /**
@@ -46,11 +46,10 @@ export async function imgFileZip(file, { q, type }) {
  */
 export async function imgZip(url, { q, type }) {
     const types = ['image/jpeg', 'image/webp'];
-    const canvas = await imgAsCanvas(url)
+    const canvas = await imgAsCanvas(url);
 
-    return canvas.toDataURL((~types.indexOf(type) && type) || types[0], q || 0.92)
+    return canvas.toDataURL((~types.indexOf(type) && type) || types[0], q || 0.92);
 }
-
 
 /**
  * 图片绘制在canvas画布上
@@ -62,28 +61,28 @@ export async function imgAsCanvas(url) {
     const loadImg = url => {
         return new Promise((resolve, reject) => {
             let img = new Image();
-            img.crossOrigin = 'anonymous'
-            img.onload = function (e) {
-                resolve(img)
-            }
-            img.onabort = function (e) {
-                console.warn('[Image:abort] ' + e)
-                reject(e)
-            }
-            img.onerror = function (e) {
-                console.error('[Image:error] ' + e)
-                reject(e)
-            }
+            img.crossOrigin = 'anonymous';
+            img.onload = function(e) {
+                resolve(img);
+            };
+            img.onabort = function(e) {
+                console.warn('[Image:abort] ' + e);
+                reject(e);
+            };
+            img.onerror = function(e) {
+                console.error('[Image:error] ' + e);
+                reject(e);
+            };
     
-            img.src = url
-        })
-    }
+            img.src = url;
+        });
+    };
     let canvas = document.createElement('canvas'),
-    context = canvas.getContext('2d'),
-    img = await loadImg(url);
+        context = canvas.getContext('2d'),
+        img = await loadImg(url);
 
-    canvas.height =  img.height;
+    canvas.height = img.height;
     canvas.width = img.width;
     context.drawImage(img, 0, 0, img.width, img.height);
-    return canvas
+    return canvas;
 }

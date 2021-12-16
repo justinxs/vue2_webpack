@@ -1,9 +1,9 @@
 <template>
-    <layout>
+    <v2-layout>
         <div class="user-page">
             uuuuuuuuuuuuuuuuuu{{formatTime(Date.now())}}
         </div>
-    </layout>
+    </v2-layout>
 </template>
 <script>
 import request from '@/utils/request';

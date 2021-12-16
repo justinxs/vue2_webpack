@@ -1,6 +1,6 @@
 function proxyPromise(p) {
     if (!(p instanceof Promise)) {
-        p = Promise.resolve(p)
+        p = Promise.resolve(p);
     }
     let proxy = {
         promise: p,
@@ -8,44 +8,44 @@ function proxyPromise(p) {
         then(success, failure) {
             const proxySuccess = res => {
                 if (this.state !== 'aborted' && success) {
-                    return success(res)
+                    return success(res);
                 }
-            }
+            };
             const proxyFailure = err => {
                 if (this.state !== 'aborted' && failure) {
-                    return failure(err)
+                    return failure(err);
                 }
-            }
-            return proxyPromise(failure ? p.then(proxySuccess, proxyFailure) : p.then(proxySuccess))
+            };
+            return proxyPromise(failure ? p.then(proxySuccess, proxyFailure) : p.then(proxySuccess));
         },
         catch(failure) {
             return proxyPromise(p.catch(err => {
                 if (this.state !== 'aborted' && failure) {
-                    return failure(err)
+                    return failure(err);
                 }
-            }))
+            }));
         },
         finally(cb) {
             return proxyPromise(p.finally(res => {
                 if (this.state !== 'aborted' && cb) {
-                    return cb(res)
+                    return cb(res);
                 }
-            }))
+            }));
         },
         abort() {
             if (this.state === 'pending') {
-                console.warn('promise aborted', p)
-                this.state = 'aborted'
+                console.warn('promise aborted', p);
+                this.state = 'aborted';
             }
 
-            return this
+            return this;
         }
-    }
+    };
 
-    p.then(res => proxy.state = 'fulfilled')
-    p.catch(err => proxy.state = 'rejected')
+    p.then(res => proxy.state = 'fulfilled');
+    p.catch(err => proxy.state = 'rejected' && err);
 
-    return proxy
+    return proxy;
 }
 
-export default proxyPromise
+export default proxyPromise;

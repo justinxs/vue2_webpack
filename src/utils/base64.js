@@ -1,15 +1,14 @@
-import { getDataType } from "./common.js"
+import { getDataType } from './common.js';
 
 /**
  * Base64:     data:[<mediatype>][;base64],<data> 
  * 
  */
 
-const BASE64_REGEXP = /^data:([\S]+);base64,(.+)/
-
+const BASE64_REGEXP = /^data:([\S]+);base64,(.+)/;
 
 export function testBase64(str) {
-    return BASE64_REGEXP.test(str)
+    return BASE64_REGEXP.test(str);
 }
 
 /**
@@ -67,18 +66,17 @@ function strToUint8(str) {
     return aBytes;
 }
 
-
 function uint6ToB64(uint6) {
     if (uint6 < 26) {
-        return uint6 + 65
+        return uint6 + 65;
     } else if (uint6 < 52) {
-        return uint6 + 71
+        return uint6 + 71;
     } else if (uint6 < 62) {
-        return uint6 - 4
+        return uint6 - 4;
     } else if (uint6 === 62) {
-        return 43
+        return 43;
     } else if (uint6 === 63) {
-        return 47
+        return 47;
     }
 }
 
@@ -88,11 +86,11 @@ function uint6ToB64(uint6) {
  * @returns {String} base64编码内容
  */
 export function base64Encode(str) {
-    let aBytes = strToUint8(str), eqLen = (3 - (aBytes.length % 3)) % 3, sB64Enc = ""
+    let aBytes = strToUint8(str), eqLen = (3 - (aBytes.length % 3)) % 3, sB64Enc = '';
 
     for (let nMod3, nLen = aBytes.length, nUint24 = 0, nIdx = 0; nIdx < nLen; nIdx++) {
-        nMod3 = nIdx % 3
-        nUint24 |= aBytes[nIdx] << (16 >>> nMod3 & 24)
+        nMod3 = nIdx % 3;
+        nUint24 |= aBytes[nIdx] << (16 >>> nMod3 & 24);
         if (nMod3 === 2 || aBytes.length - nIdx === 1) {
             sB64Enc += String.fromCharCode(
                 uint6ToB64(nUint24 >>> 18 & 63), 
@@ -104,23 +102,20 @@ export function base64Encode(str) {
         }
     }
 
-    return  eqLen === 0 ? sB64Enc : sB64Enc.substring(0, sB64Enc.length - eqLen) + (eqLen === 1 ? "=" : "==")
+    return eqLen === 0 ? sB64Enc : sB64Enc.substring(0, sB64Enc.length - eqLen) + (eqLen === 1 ? '=' : '==');
 }
-
-
-
 
 function b64ToUint6(b64) {
     if (b64 > 64 && b64 < 91) {
-        return b64 - 65
+        return b64 - 65;
     } else if (b64 > 96 && b64 < 123) {
-        return b64 - 71
+        return b64 - 71;
     } else if (b64 > 47 && b64 < 58) {
-        return b64 + 4
+        return b64 + 4;
     } else if (b64 === 43) {
-        return 62
+        return 62;
     } else if (b64 === 47) {
-        return 63
+        return 63;
     }
 }
 
@@ -131,7 +126,7 @@ function b64ToUint6(b64) {
  * 
  */
 function base64ToUint8(base64Content, nBlockSize) {
-    let {noPaddingContent: sB64Enc, size: nOutLen} = getBase64Size(base64Content, nBlockSize),
+    let { noPaddingContent: sB64Enc, size: nOutLen } = getBase64Size(base64Content, nBlockSize),
         nInLen = sB64Enc.length,
         aBytes = new Uint8Array(nOutLen);
 
@@ -155,38 +150,37 @@ function base64ToUint8(base64Content, nBlockSize) {
  * @returns {String} 解码后的字符串
  */
 export function base64Decode(base64Content) {
-    let sView = "", aBytes = base64ToUint8(base64Content);
+    let sView = '', aBytes = base64ToUint8(base64Content);
 
     for (let nPart, nCode, nLen = aBytes.length, nIdx = 0; nIdx < nLen; nIdx++) {
         nPart = aBytes[nIdx];
         if (nPart > 251 && nPart < 254 && nIdx + 5 < nLen) {
             /* six bytes */
             /* (nPart - 252 << 30) may be not so safe in ECMAScript! So...: */
-            nCode = (nPart - 252) * 1073741824 + (aBytes[++nIdx] - 128 << 24) + (aBytes[++nIdx] - 128 << 18) + (aBytes[++nIdx] - 128 << 12) + (aBytes[++nIdx] - 128 << 6) + aBytes[++nIdx] - 128
+            nCode = (nPart - 252) * 1073741824 + (aBytes[++nIdx] - 128 << 24) + (aBytes[++nIdx] - 128 << 18) + (aBytes[++nIdx] - 128 << 12) + (aBytes[++nIdx] - 128 << 6) + aBytes[++nIdx] - 128;
         } else if (nPart > 247 && nPart < 252 && nIdx + 4 < nLen) {
             /* five bytes */
-            nCode = (nPart - 248 << 24) + (aBytes[++nIdx] - 128 << 18) + (aBytes[++nIdx] - 128 << 12) + (aBytes[++nIdx] - 128 << 6) + aBytes[++nIdx] - 128
+            nCode = (nPart - 248 << 24) + (aBytes[++nIdx] - 128 << 18) + (aBytes[++nIdx] - 128 << 12) + (aBytes[++nIdx] - 128 << 6) + aBytes[++nIdx] - 128;
         } else if (nPart > 239 && nPart < 248 && nIdx + 3 < nLen) {
             /* four bytes */
-            nCode = (nPart - 240 << 18) + (aBytes[++nIdx] - 128 << 12) + (aBytes[++nIdx] - 128 << 6) + aBytes[++nIdx] - 128
+            nCode = (nPart - 240 << 18) + (aBytes[++nIdx] - 128 << 12) + (aBytes[++nIdx] - 128 << 6) + aBytes[++nIdx] - 128;
         } else if (nPart > 223 && nPart < 240 && nIdx + 2 < nLen) {
             /* three bytes */
-            nCode = (nPart - 224 << 12) + (aBytes[++nIdx] - 128 << 6) + aBytes[++nIdx] - 128
+            nCode = (nPart - 224 << 12) + (aBytes[++nIdx] - 128 << 6) + aBytes[++nIdx] - 128;
         } else if (nPart > 191 && nPart < 224 && nIdx + 1 < nLen) {
             /* two bytes */
-            nCode = (nPart - 192 << 6) + aBytes[++nIdx] - 128
+            nCode = (nPart - 192 << 6) + aBytes[++nIdx] - 128;
         } else {
             /* nPart < 127 ? */ 
             /* one byte */
-            nCode = nPart
+            nCode = nPart;
         }
 
-        sView += String.fromCharCode(nCode)
+        sView += String.fromCharCode(nCode);
     }
 
-    return sView
+    return sView;
 }
-
 
 /**
  * 分解base64数据 
@@ -197,18 +191,18 @@ export function base64Decode(base64Content) {
  * @returns {Object} [mimeType]数据MIME类型，[size]数据大小，[content]数据内容
  */
 export function formatBase64(dataURI, blockSize) {
-    let matches = BASE64_REGEXP.exec(dataURI)
+    let matches = BASE64_REGEXP.exec(dataURI);
     if (!matches) {
-        console.error('dataURI is not define or dataURI is not DataURI')
-        return
+        console.error('dataURI is not define or dataURI is not DataURI');
+        return;
     }
-    let { noPaddingContent, size } = getBase64Size(matches[2], blockSize)
+    let { noPaddingContent, size } = getBase64Size(matches[2], blockSize);
     return {
         mimeType: matches[1] || 'text/plain;charset=UTF-8',
         content: matches[2],
         noPaddingContent,
         size
-    }
+    };
 }
 
 /**
@@ -230,15 +224,14 @@ export function formatBase64(dataURI, blockSize) {
  * = nopaddingLen * 3 / 4 - (0/0.25/0.5)  ≈  Math.floor(nopaddingLen * 3 / 4)
  */
 function getBase64Size(base64Content, blockSize) {
-    let noPaddingContent = base64Content.replace(/[^A-Za-z0-9\+\/]/g, ""),
+    let noPaddingContent = base64Content.replace(/[^A-Za-z0-9\+\/]/g, ''),
         nopaddingLen = noPaddingContent.length;
     
     return {
         noPaddingContent,
         size: blockSize ? Math.ceil((nopaddingLen * 3 + 1 >>> 2) / blockSize) * blockSize : nopaddingLen * 3 + 1 >>> 2
-    }
+    };
 }
-
 
 /**
  * base64 转blob文件流
@@ -254,9 +247,8 @@ function getBase64Size(base64Content, blockSize) {
 export function base64AsBlob(dataURI, mimeType) {
     let base64 = formatBase64(dataURI), buffer = base64ToUint8(base64.content);
 
-    return new Blob([buffer], { type: mimeType || base64.mimeType })
+    return new Blob([buffer], { type: mimeType || base64.mimeType });
 }
-
 
 /**
  * 文件转blob数据格式
@@ -279,15 +271,14 @@ export function toBlob(file, mimeType) {
             blobData = new Blob([file], { type: mimeType });
             break;
         case 'string':
-            blobData = base64Reg.test(file) ? base64AsBlob(file) : null;
+            blobData = testBase64.test(file) ? base64AsBlob(file) : null;
             break;
         default:
             break;
     }
     
-    return blobData
+    return blobData;
 }
-
 
 /**
  * 文件转base64格式
@@ -301,20 +292,20 @@ export async function fileAsBase64(file, mimeType) {
         return new Promise((resolve, reject) => {
             let reader = new FileReader();
             reader.readAsDataURL(file);
-            reader.onload = function (e) {
+            reader.onload = function(e) {
                 resolve({
                     name: file.name || '',
                     type: file.type,
                     originSize: file.size,
                     base64: e.target.result
-                })
-            }
-            reader.onerror = function (e) {
-                console.error('[FileReader:error]' + e)
-                reject(e)
-            }
-        })
-    }
+                });
+            };
+            reader.onerror = function(e) {
+                console.error('[FileReader:error]' + e);
+                reject(e);
+            };
+        });
+    };
     let resourceType = getDataType(file);
     let base64Data = null;
     switch (resourceType) {
@@ -332,18 +323,18 @@ export async function fileAsBase64(file, mimeType) {
             break;
         case 'string':
             if (testBase64(file)) {
-                base64Data = formatBase64(file)
+                base64Data = formatBase64(file);
                 base64Data = {
                     name: '',
                     type: base64Data.mimeType,
                     originSize: base64Data.size,
                     base64: file
-                }
+                };
             }
             break;
         default:
             break;
     }
     
-    return base64Data
+    return base64Data;
 }

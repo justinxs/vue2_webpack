@@ -1,33 +1,33 @@
-import { isDom } from './element.js'
-import Events from './events.js'
+import { isDom } from './element.js';
+import Events from './events.js';
 
 // 中文输入
 export function compositeInput(target, callback) {
     if (!isDom(target)) {
-        target = document.querySelector(target)
+        target = document.querySelector(target);
     }
     let flag = false;
     let cp_start_cb = e => flag = true;
     let cp_end_cb = e => {
         flag = false;
-        callback && callback(e.target, 'compositionend')
+        callback && callback(e.target, 'compositionend');
     };
     let input_cb = e => {
-        !flag && callback && callback(e.target, 'input')
+        !flag && callback && callback(e.target, 'input');
     };
     let blur_cb = e => callback && callback(e.target, 'blur');
 
-    target.addEventListener('compositionstart', function (e) {
-        cp_start_cb(e)
+    target.addEventListener('compositionstart', function(e) {
+        cp_start_cb(e);
     }, false);
-    target.addEventListener('compositionend', function (e) {
-        cp_end_cb(e)
+    target.addEventListener('compositionend', function(e) {
+        cp_end_cb(e);
     }, false);
-    target.addEventListener('input', function (e) {
-        input_cb(e)
+    target.addEventListener('input', function(e) {
+        input_cb(e);
     }, false);
-    target.addEventListener('blur', function (e) {
-        blur_cb(e)
+    target.addEventListener('blur', function(e) {
+        blur_cb(e);
     }, false);
     
     return {
@@ -36,11 +36,10 @@ export function compositeInput(target, callback) {
             target.removeEventListener('compositionend', cp_end_cb, false);
             target.removeEventListener('input', input_cb, false);
             target.removeEventListener('blur', blur_cb, false);
-            target = null
+            target = null;
         }
-    }
+    };
 }
-
 
 /**
  * 光标记忆输入框
@@ -48,90 +47,83 @@ export function compositeInput(target, callback) {
  */
 export class MemoriesEditor extends Events {
     constructor(params) {
-        super()
-        let { editor, isPreventEnter = false } = params
-        this.editor = editor
-        this.isPreventEnter = isPreventEnter
-        this.init()
+        super();
+        let { editor, isPreventEnter = false } = params;
+        this.editor = editor;
+        this.isPreventEnter = isPreventEnter;
+        this.init();
     }
     get category() {
-        return this.editor.nodeName === 'TEXTAREA' ? 'textarea' : 'editor'
-    }
-    set category(val) {
-        return val
+        return this.editor.nodeName === 'TEXTAREA' ? 'textarea' : 'editor';
     }
     get content() {
-        return this.category === 'textarea' ? this.editor.value : this.editor.innerHTML
+        return this.category === 'textarea' ? this.editor.value : this.editor.innerHTML;
     }
     set content(val) {
-        this.setContent(val)
+        this.setContent(val);
     }
     init() {
         if (!isDom(this.editor)) {
-            this.editor = document.querySelector(this.editor)
+            this.editor = document.querySelector(this.editor);
         }
         if (this.category !== 'textarea' && this.editor.getAttribute('contenteditable') !== 'true') {
-            this.editor.setAttribute('contenteditable', true)
+            this.editor.setAttribute('contenteditable', true);
         }
-        this.lastEditRange = null
-        this.editorEvent = this.addEvent()
-        this.setRangeEnd()
+        this.lastEditRange = null;
+        this.editorEvent = this.addEvent();
+        this.setRangeEnd();
     }
     preventEnter(e) {
         if (e.keyCode == 13) {
             e.preventDefault();
-            this.emit('enter', this)
+            this.emit('enter', this);
         }
     }
-    changeSelection(e) {
-        let selection = window.getSelection()
-        this.lastEditRange = selection.getRangeAt(0);
-    }
     contentChange(action = 'input') {
-        this.emit('contentChange', { content: this.content, action })
+        this.emit('contentChange', { content: this.content, action });
     }
     setContent(content) {
         if (this.category === 'textarea') {
-            this.editor.value = content
+            this.editor.value = content;
         } else {
-            this.editor.innerHTML = content
+            this.editor.innerHTML = content;
         }
-        this.setRangeEnd()
-        this.contentChange('set')
+        this.setRangeEnd();
+        this.contentChange('set');
     }
     addEvent() {
-        const changeSelection = this.changeSelection.bind(this)
-        const contentChange = (target, action) => this.contentChange(action)
-        const preventEnter = this.preventEnter.bind(this)
-        const category = this.category
-        const editor = this.editor
-        const isPreventEnter = this.isPreventEnter
-        const inputEvent = compositeInput(editor, contentChange)
+        const changeSelection = this.changeSelection.bind(this);
+        const contentChange = (target, action) => this.contentChange(action);
+        const preventEnter = this.preventEnter.bind(this);
+        const category = this.category;
+        const editor = this.editor;
+        const isPreventEnter = this.isPreventEnter;
+        const inputEvent = compositeInput(editor, contentChange);
         if (category !== 'textarea') {
             editor.addEventListener('click', changeSelection, false);
             editor.addEventListener('keyup', changeSelection, false);
         }
         if (isPreventEnter) {
-            editor.addEventListener('keydown', preventEnter, false)
+            editor.addEventListener('keydown', preventEnter, false);
         }
         return {
             editor,
             clear() {
                 if (category !== 'textarea') {
-                    editor.removeEventListener('click', changeSelection, false)
-                    editor.removeEventListener('keyup', changeSelection, false)
+                    editor.removeEventListener('click', changeSelection, false);
+                    editor.removeEventListener('keyup', changeSelection, false);
                 }
                 if (isPreventEnter) {
-                    editor.removeEventListener('keydown', preventEnter, false)
+                    editor.removeEventListener('keydown', preventEnter, false);
                 }
-                inputEvent && inputEvent.clear()
+                inputEvent && inputEvent.clear();
             }
-        }
+        };
     }
     clearEvent() {
         if (this.editorEvent) {
-            this.editorEvent.clear()
-            this.editorEvent = null
+            this.editorEvent.clear();
+            this.editorEvent = null;
         }
     }
     changeSelection(e) {
@@ -140,31 +132,31 @@ export class MemoriesEditor extends Events {
     getSelection(range) {
         let selection = window.getSelection();
         if (range) {
-            this.setSelectionRange(selection, { range })
+            this.setSelectionRange(selection, { range });
         }
-        return selection
+        return selection;
     }
     setSelectionRange(selection, rangeParams) {
-        let { range, rangeNode, rangeStart } = rangeParams
+        let { range, rangeNode, rangeStart } = rangeParams;
         if (!range) {
-            range = document.createRange()
-            range.selectNodeContents(rangeNode)
-            range.setStart(rangeNode, rangeStart)
-            range.collapse(true)
+            range = document.createRange();
+            range.selectNodeContents(rangeNode);
+            range.setStart(rangeNode, rangeStart);
+            range.collapse(true);
         }
         selection.removeAllRanges();
         selection.addRange(range);
         
-        return range
+        return range;
     }
     insert(content) {
         if (!content) return;
 
-        this.category === 'textarea' ? this.insertTextarea(content) : this.insertEditor(content)
-        this.contentChange('insert')
+        this.category === 'textarea' ? this.insertTextarea(content) : this.insertEditor(content);
+        this.contentChange('insert');
     }
     insertTextarea(content) {
-        const editor = this.editor
+        const editor = this.editor;
 
         editor.focus();
         if (document.selection) {
@@ -172,9 +164,9 @@ export class MemoriesEditor extends Events {
             sel.text = content;
         } else if (typeof editor.selectionStart === 'number' && typeof editor.selectionEnd === 'number') {
             let startPos = editor.selectionStart,
-            endPos = editor.selectionEnd,
-            cursorPos = startPos,
-            tmpStr = editor.value;
+                endPos = editor.selectionEnd,
+                cursorPos = startPos,
+                tmpStr = editor.value;
 
             editor.value = tmpStr.substring(0, startPos) + content + tmpStr.substring(endPos, tmpStr.length);
             cursorPos += content.length;
@@ -184,11 +176,11 @@ export class MemoriesEditor extends Events {
         }
     }
     insertEditor(content) {
-        const el = isDom(content) ? content : document.createTextNode(content)
-        this.insertRange(el)
+        const el = isDom(content) ? content : document.createTextNode(content);
+        this.insertRange(el);
     }
     insertRange(el) {
-        const editor = this.editor
+        const editor = this.editor;
 
         editor.focus();
         let selection = this.getSelection(this.lastEditRange),
@@ -211,36 +203,36 @@ export class MemoriesEditor extends Events {
         
         if (anchorNode.nodeType != Node.TEXT_NODE) {
             if (childLen == 1 && childs[0].nodeType == Node.COMMENT_NODE) {
-                anchorNode.insertBefore(el, childs[0].nextSibling)
+                anchorNode.insertBefore(el, childs[0].nextSibling);
             } else if (childLen > 0 && anchorOffset > 0) {
                 for (var i = 0; i < childLen; i++) {
                     if (i == anchorOffset - 1) {
-                        anchorNode.insertBefore(el, childs[i].nextSibling)
+                        anchorNode.insertBefore(el, childs[i].nextSibling);
                         break;
                     }
                 }
             } else if (anchorOffset == 0) {
-                let anchorChild = anchorNode.childNodes[0]
+                let anchorChild = anchorNode.childNodes[0];
                 if (anchorChild && anchorChild.nodeName === 'BR') {
-                    anchorNode.removeChild(anchorChild)
+                    anchorNode.removeChild(anchorChild);
                 }
-                anchorNode.appendChild(el)
+                anchorNode.appendChild(el);
             } else {
-                anchorNode.appendChild(el)
+                anchorNode.appendChild(el);
             }
             
-            rangeNode = el.parentNode
-            rangeStart += 1
+            rangeNode = el.parentNode;
+            rangeStart += 1;
         } else {
             rangeNode = anchorNode.splitText(anchorOffset);
             anchorNode.parentNode.insertBefore(el, rangeNode);
-            rangeStart = 0
+            rangeStart = 0;
         }
 
         this.lastEditRange = this.setSelectionRange(selection, { rangeNode, rangeStart });
     }
     setRangeEnd() {
-        const editor = this.editor
+        const editor = this.editor;
         if (this.category === 'textarea') {
             editor.selectionStart = editor.selectionEnd = this.content.length;
         } else {
@@ -252,8 +244,8 @@ export class MemoriesEditor extends Events {
         }
     }
     destroy() {
-        this.clearEvent()
-        this.editor = null
-        this.lastEditRange = null
+        this.clearEvent();
+        this.editor = null;
+        this.lastEditRange = null;
     }
 }

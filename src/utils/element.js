@@ -1,9 +1,7 @@
 
-
 export function isDom(dom) {
-    return dom instanceof HTMLElement
+    return dom instanceof HTMLElement;
 }
-
 
 /**
  * url 查询参数
@@ -11,16 +9,16 @@ export function isDom(dom) {
  * @param {string} mode 路由模式 history => 正常模式 hash => hash模式
  */
 export function getQueryString(name, mode = 'history') {
-    let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+    let reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
     let hashReg = /(\?.*)/;
     let queryString = window.location.search;
     if (mode === 'hash') {
         let matches = hashReg.exec(window.location.hash);
-        queryString = matches ? matches[1] : ''
+        queryString = matches ? matches[1] : '';
     }
-	let r = queryString.substr(1).match(reg);
-	if (r != null) return unescape(r[2]);
-	return null;
+    let r = queryString.substr(1).match(reg);
+    if (r != null) return unescape(r[2]);
+    return null;
 }
 
 /**
@@ -52,28 +50,28 @@ export function iOSTouch(isPreventDouble = false) {
  * @returns {Object} clear 解绑事件
  */
 export function proxyAtag(parent, cb) {
-    parent = isDom(parent) ? parent : document.querySelector(parent)
+    parent = isDom(parent) ? parent : document.querySelector(parent);
 
-    if (!parent) return console.error(`parent is undefined!`)
+    if (!parent) return console.error(`parent is undefined!`);
     const getAtag = (target) => {
         if (target.nodeName === 'A') {
-            return target
+            return target;
         }
         if (target === parent || !target) {
-            return null
+            return null;
         }
 
-        return getAtag(target.parentNode)
-    }
+        return getAtag(target.parentNode);
+    };
     const listener = e => {
-        let target = e.target
+        let target = e.target;
         if (target = getAtag(target)) {
             e.preventDefault();
-            cb && cb({ href: target.getAttribute('href'), target: target.getAttribute('target') }, e)
+            cb && cb({ href: target.getAttribute('href'), target: target.getAttribute('target') }, e);
         }
-    }
+    };
     
-    parent.addEventListener('click', listener)
+    parent.addEventListener('click', listener);
 
-    return { clear: () => parent.removeEventListener('click', listener) }
+    return { clear: () => parent.removeEventListener('click', listener) };
 }

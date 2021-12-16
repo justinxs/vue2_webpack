@@ -13,12 +13,11 @@ import * as filters from './filters'; // global filters
 import Layout from '@/components/Layout.vue';
 import globalMixin from '@/mixins/global';
 
-
 // register global utility filters.
 Object.keys(filters).forEach(key => {
     Vue.filter(key, filters[key]);
 });
-Vue.component('layout', Layout);
+Vue.component('V2Layout', Layout);
 Vue.mixin(globalMixin);
 
 Vue.config.productionTip = false;

@@ -1,5 +1,4 @@
-import { toBlob } from "./base64.js"
-
+import { toBlob } from './base64.js';
 
 /**
  * 兼容创建XMLHttpRquest对象
@@ -10,20 +9,20 @@ import { toBlob } from "./base64.js"
 export function createXhr() {
     let xhr;
     try {
-        xhr = new XMLHttpRequest()
+        xhr = new XMLHttpRequest();
     } catch (e) {
         try {
-            xhr = ActiveXobject('Msxml12.XMLHTTP')
+            xhr = ActiveXobject('Msxml12.XMLHTTP');
         } catch (ex) {
             try {
-                xhr = ActiveXobject('Microsoft.XMLHTTP')
+                xhr = ActiveXobject('Microsoft.XMLHTTP');
             } catch (failed) {
-                xhr = false
+                xhr = false;
             }
         }
     }
 
-    return xhr
+    return xhr;
 }
 /**
  * 远程资源本地化
@@ -48,30 +47,29 @@ export function createXhr() {
 export function getStaticFile(url, type = '') {
     return new Promise((resolve, reject) => {
         let xhr = createXhr();
-        xhr.onload = function () {
+        xhr.onload = function() {
             if (xhr.readyState === xhr.DONE) {
                 if (xhr.status === 200) {
                     resolve({
                         code: xhr.status,
                         data: xhr.response || xhr.responseText
-                    })
+                    });
                 } else {
                     reject({
                         code: xhr.status,
                         data: xhr
-                    })
+                    });
                 }
             }
-        }
-        xhr.onerror = function (error) {
-            reject(error)
-        }
+        };
+        xhr.onerror = function(error) {
+            reject(error);
+        };
         xhr.open('GET', url);
         xhr.responseType = type;
         xhr.send();
-    })
+    });
 }
-
 
 /**
  * 前端下载文件(PC)
@@ -87,22 +85,22 @@ export async function downloadFile({ file, mimeType, fileName, isRemote }) {
         blobData = toBlob(file, mimeType);
     } else {
         let remoteData = await getStaticFile(file, 'blob');
-        blobData = remoteData && remoteData.code == 200 ? remoteData.data : null
+        blobData = remoteData && remoteData.code == 200 ? remoteData.data : null;
     } 
     if (!blobData) {
         return console.error(
             !isRemote
-            ? 'file data type require [File|Blob|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|base64String]'
-            : file + ' remote error'
-        )
+                ? 'file data type require [File|Blob|Uint8Array|Uint16Array|Uint32Array|ArrayBuffer|base64String]'
+                : file + ' remote error'
+        );
     }
 
     if (navigator.msSaveBlob) {
-        navigator.msSaveBlob(blobData, fileName)
+        navigator.msSaveBlob(blobData, fileName);
     } else {
         let dataURL = URL.createObjectURL(blobData),
-        save_link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a'),
-        event = document.createEvent('MouseEvents');
+            save_link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a'),
+            event = document.createEvent('MouseEvents');
 
         save_link.href = dataURL;
         save_link.download = fileName;
@@ -112,5 +110,3 @@ export async function downloadFile({ file, mimeType, fileName, isRemote }) {
         save_link = null;
     }
 }
-
-
