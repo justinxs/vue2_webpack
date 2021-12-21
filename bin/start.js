@@ -20,7 +20,7 @@ loadESMoudle(['chalk', 'ora']).then(([chalk, ora]) => {
     }, (err, stats) => {
         spinner.stop();
         if (!serverStart) {
-            nodemon(`--watch src -e js,scss,vue --watch server -e js --watch config -e js --ignore node_modules/**node_modules --inspect=${serverConfig.inspectPort} ./server/index.js`);
+            nodemon(`-e js,scss,vue --watch src --watch server --watch config --ignore node_modules/**node_modules --inspect=${serverConfig.inspectPort} ./server/index.js`);
             serverStart = true;
         }
 
