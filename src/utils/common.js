@@ -1,3 +1,4 @@
+import UAParser from 'ua-parser-js';
 /**
  * type:       [object Object]
  * ie:         Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; .NET4.0C; .NET4.0E; InfoPath.3; rv:11.0) like Gecko
@@ -337,3 +338,68 @@ export function fillTemplate(template, data, s) {
         return data[prop] || data[prop] === 0 ? data[prop] : '';
     });
 }
+
+export function getScrollTop(el) {
+    const top = 'scrollTop' in el ? el.scrollTop : el.pageYOffset; // iOS scroll bounce cause minus scrollTop
+  
+    return Math.max(top, 0);
+}
+
+export function setScrollTop(el, value) {
+    if ('scrollTop' in el) {
+        el.scrollTop = value;
+    } else {
+        el.scrollTo(el.scrollX, value);
+    }
+}
+
+/**
+ * H5打开手机app
+ * @param {Object|String} config ios,android 提供（打开app的链接和scheme）
+ *  ios app下载链接
+ *  android app下载链接
+ *  scheme 协议链接[scheme:][//authority][path][?query]
+ * @param {Function} callback 回调
+ */
+export function openApp(config, callback) {
+    const scheme = typeof config === 'string' ? config : (config && 'scheme' in config ? config.scheme : 'weixin://');
+    const env = UAParser();
+    const testEnv = (keyStr, val) => {
+        const envVal = keyStr.split('.').reduce((v, prop) => v[prop] || v, env);
+        return val instanceof Function
+            ? val(envVal)
+            : val instanceof RegExp ? val.test(envVal) : new RegExp(val.toString(), 'ig').test(envVal);
+    };
+    let ifr, startTime = Date.now(), checkTimeID;
+    // 微信内部webview禁止跳转其他APP，除非让TX加上白名单
+    // TODO 其它APP内部可能也有禁止跳转策略
+    if (testEnv('browser.name', /WeChat/ig)) {
+        return callback && callback({ isOpen: false, forbidon: true, env });
+    }
+    // ios9 以上使用scheme协议直接打开，其它用iframe
+    if (testEnv('os.name', /iOS/ig) && testEnv('os.version', v => parseInt(v) > 8)) {
+        window.location.href = scheme;
+    } else {
+        ifr = document.createElement('iframe');
+        ifr.setAttribute('src', scheme);
+        ifr.setAttribute('style', 'display:none');
+        document.body.appendChild(ifr);
+    }
+    // 定时20ms检测是否打开了APP(hidden = true => 已打开)，超过3000ms失败
+    checkTimeID = setInterval(() => {
+        let isOpen = document.hidden || document.webkitHidden, isEnd = Date.now() - startTime > 3000;
+        if (isOpen || isEnd) {
+            ifr && document.body.removeChild(ifr);
+            clearInterval(checkTimeID);
+            callback && callback({ isOpen, env });
+            if (!isOpen) {
+                if (testEnv('os.name', /Android/ig) && config.android) {
+                    window.location.href = config.android;
+                } else if (testEnv('os.name', /iOS/ig) && config.ios) {
+                    window.location.href = config.ios;
+                }
+            }
+        }
+    }, 20);
+}
+openApp();
