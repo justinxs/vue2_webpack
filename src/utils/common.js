@@ -364,20 +364,20 @@ export function setScrollTop(el, value) {
 export function openApp(config, callback) {
     const scheme = typeof config === 'string' ? config : (config && 'scheme' in config ? config.scheme : 'weixin://');
     const env = UAParser();
-    const testEnv = (keyStr, val) => {
-        const envVal = keyStr.split('.').reduce((v, prop) => v[prop] || v, env);
-        return val instanceof Function
-            ? val(envVal)
-            : val instanceof RegExp ? val.test(envVal) : new RegExp(val.toString(), 'ig').test(envVal);
+    const testEnv = {
+        isWeChat: /WeChat/ig.test(env.browser.name),
+        isIOS: /iOS/ig.test(env.os.name),
+        isAndroid: /Android/ig.test(env.os.name),
+        isOverIOS8: /iOS/ig.test(env.os.name) && parseInt(env.os.version) > 8
     };
     let ifr, startTime = Date.now(), checkTimeID;
     // 微信内部webview禁止跳转其他APP，除非让TX加上白名单
     // TODO 其它APP内部可能也有禁止跳转策略
-    if (testEnv('browser.name', /WeChat/ig)) {
+    if (testEnv.isWeChat) {
         return callback && callback({ isOpen: false, forbidon: true, env });
     }
     // ios9 以上使用scheme协议直接打开，其它用iframe
-    if (testEnv('os.name', /iOS/ig) && testEnv('os.version', v => parseInt(v) > 8)) {
+    if (testEnv.isOverIOS8) {
         window.location.href = scheme;
     } else {
         ifr = document.createElement('iframe');
@@ -393,13 +393,12 @@ export function openApp(config, callback) {
             clearInterval(checkTimeID);
             callback && callback({ isOpen, env });
             if (!isOpen) {
-                if (testEnv('os.name', /Android/ig) && config.android) {
+                if (testEnv.isAndroid && config.android) {
                     window.location.href = config.android;
-                } else if (testEnv('os.name', /iOS/ig) && config.ios) {
+                } else if (testEnv.isIOS && config.ios) {
                     window.location.href = config.ios;
                 }
             }
         }
     }, 20);
 }
-openApp();
