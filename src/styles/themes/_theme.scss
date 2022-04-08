@@ -26,6 +26,6 @@ $themes: (
     $primary-color: getMapVal('primary-color', $theme);
 
     body {
-        background-color: $primary-color;
+        // background-color: $primary-color;
     }
 }

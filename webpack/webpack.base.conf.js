@@ -108,7 +108,7 @@ module.exports = {
         },
     },
     plugins: [
-        new ESLintPlugin(),
+        // new ESLintPlugin(),
         new VueLoaderPlugin(),
         // 自动注入js、css等入口资源生成html文件
         new HtmlWebpackPlugin({

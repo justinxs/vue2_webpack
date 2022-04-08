@@ -15,6 +15,10 @@ export default new Router({
         {
             path: '/user',
             component: () => import('@/views/user/index.vue')
+        },
+        {
+            path: '/chart',
+            component: () => import('@/views/Chart.vue')
         }
     ]
 });
