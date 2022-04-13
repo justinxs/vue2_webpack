@@ -4,6 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const { VueLoaderPlugin } = require('vue-loader');
 const ESLintPlugin = require('eslint-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     performance: {
@@ -108,6 +109,18 @@ module.exports = {
         },
     },
     plugins: [
+        new CopyWebpackPlugin({
+            patterns: [
+                {
+                    from: path.resolve(__dirname, '../public'),
+                    filter: (resourcePath) => {
+                        return !/public\/index\.html$/.test(resourcePath);
+                    },
+                    to: path.resolve(__dirname, '../dist'),
+                    noErrorOnMissing: true
+                },
+            ],
+        }),
         // new ESLintPlugin(),
         new VueLoaderPlugin(),
         // 自动注入js、css等入口资源生成html文件
@@ -131,12 +144,12 @@ module.exports = {
     ],
     resolve: {
         // 路径别名以及文件默认查找后缀数组
-		alias: {
-			'@': path.resolve(__dirname, '../src'),
-			'@styles': path.resolve(__dirname, '../src/styles'),
-			'@images': path.resolve(__dirname, '../src/images'),
-			'@theme': path.resolve(__dirname, `../src/styles/themes/${process.env.THEME}.scss`)
-		},
-		extensions: ['.js', '.ts', '.jsx', '.tsx', '.vue', '.json'],
-	}
+        alias: {
+            '@': path.resolve(__dirname, '../src'),
+            '@styles': path.resolve(__dirname, '../src/styles'),
+            '@images': path.resolve(__dirname, '../src/images'),
+            '@theme': path.resolve(__dirname, `../src/styles/themes/${process.env.THEME}.scss`)
+        },
+        extensions: ['.js', '.ts', '.jsx', '.tsx', '.vue', '.json'],
+    }
 };

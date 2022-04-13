@@ -19,6 +19,10 @@ export default new Router({
         {
             path: '/chart',
             component: () => import('@/views/Chart.vue')
+        },
+        {
+            path: '/video',
+            component: () => import('@/views/Video.vue')
         }
     ]
 });
